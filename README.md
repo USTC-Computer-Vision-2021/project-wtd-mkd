@@ -10,4 +10,7 @@
 
 In this project, We will reproduce the image mosaic technology.
 
+1.1.0 is provided, to run this project, you should download the whole package.
+You can change the target picture to "7.bmp" and background picture to "1,bmp" in the main function. I have to mentioned that the target picture should be smaller than the background picture, so the function can run properly.
+
 To be continue...
