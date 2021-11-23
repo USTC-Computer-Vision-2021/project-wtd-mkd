@@ -50,7 +50,7 @@ def soft_mix(src,dst,ratio,margin=2,type="minfit"):
                 den =math.sqrt((i-center[0])**2+(j-center[1])**2)
                 if(den>rate and den<radius):
                     mix_rate =den*k+b
-                    dst[i][j]=(1-mix_rate)* src[i][j]+mix_rate*dst[i][j]
+                    dst[i][j]=(1-mix_rate)* dst[i][j]+mix_rate*dstsrc[i][j]
 
                 elif (den<rate):
                     dst[i][j]=src[i][j]
