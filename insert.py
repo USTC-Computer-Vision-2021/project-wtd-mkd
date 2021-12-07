@@ -26,10 +26,14 @@ class Block():
         self.set_item_mapping()
         self.scale=1
         self.angle=0
-        self.M=np.zeros((2,3))
-        self.H=np.eye(3)
+        self.M=None
+        self.H=None
+        self.initialpic=np.float32([[0,0],[self.col-1,0],[0,self.row-1],[self.col-1,self.row-1]])
 
-        [self.ul,self.ur,self.dl,self.dr]=[(0,0),(0,self.col),(self.row,0),(self.row,self.col)]
+        self.newpic=np.float32([[0,0],[self.col-1,0],[0,self.row-1],[self.col-1,self.row-1]])
+        self.delta=5
+
+
         self.outsize=math.ceil(math.sqrt((self.row) ** 2 + (self.col) ** 2)/2)
         self.intersize=0
     def changepic(self):
@@ -42,12 +46,20 @@ class Block():
                     if (den >  self.outsize):
                         img[i][j][3]=0
 
-                    elif (den < self.outsize and den>self.intersize):
+                    elif (den <= self.outsize and den>self.intersize):
                         rate=1-(den-self.intersize)/(self.outsize-self.intersize)
                         img[i][j][3] = int(255*rate)
                     else:
-                        pass
+                        img[i][j][3] = 255
         self.img=img
+    def freshpic(self,im):
+        self.canvas.delete(self.item)
+        tkim = ImageTk.PhotoImage(Image.fromarray(im))
+        self.item = self.canvas.create_image(self.picx, self.picy, anchor='center', image=tkim)
+        self.set_item_mapping()
+
+        self.lbPic['image'] = tkim
+        self.lbPic.image = tkim
     def changeIntersize(self,event):
         self.intersize=int(event)
         self.changepic()
@@ -65,49 +77,77 @@ class Block():
         self.canvas.itemMap[self.item] = self
 
     def rsz(self,size):
-        self.canvas.delete(self.item)
         self.scale = self.scale * size
-
-
         M = cv2.getRotationMatrix2D((self.col / 2, self.row / 2), self.angle, 1)
         self.M=M
-        im = cv2.warpAffine(self.img, M, (self.row, self.col))
-        im = cv2.resize(im, (0, 0), fx=self.scale, fy=self.scale)
-        tkim = ImageTk.PhotoImage(Image.fromarray(im))
-        self.item = self.canvas.create_image(self.picx, self.picy, anchor='center', image=tkim)
-        self.set_item_mapping()
+
+        im = cv2.warpAffine(self.img, M, (self.col, self.row))
+
+        try:
+            im = cv2.warpPerspective(im, self.H, (self.col, self.row))
+            im = cv2.resize(im, (0, 0), fx=self.scale, fy=self.scale)
+        except:
+            im = cv2.resize(im, (0, 0), fx=self.scale, fy=self.scale)
 
 
-        self.lbPic['image'] = tkim
-        self.lbPic.image = tkim
+
+        self.freshpic(im)
     def rotate(self,angle):
-
-        self.canvas.delete(self.item)
         col=self.img.shape[0]
         row=self.img.shape[1]
         self.angle=angle
-        M = cv2.getRotationMatrix2D((col/2,row/2),self.angle,self.scale)
+        M = cv2.getRotationMatrix2D((col/2,row/2),self.angle,1)
+
         self.M=M
         im=cv2.warpAffine(self.img,M,(row,col))
 
-        tkim = ImageTk.PhotoImage(Image.fromarray(im))
-        self.item = self.canvas.create_image(self.picx, self.picy, anchor='center', image=tkim)
-        self.set_item_mapping()
+        try:
+            im=cv2.warpPerspective(im,self.H,(self.col, self.row))
+            im = cv2.resize(im, (0, 0), fx=self.scale, fy=self.scale)
+        except:
+            im = cv2.resize(im, (0, 0), fx=self.scale, fy=self.scale)
+        self.freshpic(im)
 
-        self.lbPic['image'] = tkim
-        self.lbPic.image = tkim
-        # button event#
+    def buttonLeftShrink(self):
+        d=self.delta
+        self.newpic[0][1]=self.newpic[0][1]+d
+        self.newpic[2][1]=self.newpic[2][1]-d
+        self.H = cv2.getPerspectiveTransform(self.initialpic, self.newpic)
 
-    def buttonul(self):
-        col = self.img.shape[1]
-        row = self.img.shape[0]
-        pts = np.float32([[0, 0], [0, row], [col, row], [col, 0]])
+        self.perspective_pic()
+    def buttonRightShrink(self):
+        d=self.delta
+        self.newpic[1][1]=self.newpic[1][1]+d
+        self.newpic[3][1]=self.newpic[3][1]-d
+        self.H = cv2.getPerspectiveTransform(self.initialpic, self.newpic)
 
-        pts1 = np.float32([[100, 0], [200, 1080], [1720, 1080], [1920, 0]])
+        self.perspective_pic()
+    def buttonUpShrink(self):
+        d=self.delta
+        self.newpic[0][0]=self.newpic[0][0]+d
+        self.newpic[1][0]=self.newpic[1][0]-d
+        self.H = cv2.getPerspectiveTransform(self.initialpic, self.newpic)
 
-        self.H = cv2.getPerspectiveTransform(pts, pts1)
+        self.perspective_pic()
+    def buttonDownShrink(self):
+        d=self.delta
+        self.newpic[2][0]=self.newpic[2][0]+d
+        self.newpic[3][0]=self.newpic[3][0]-d
+        self.H = cv2.getPerspectiveTransform(self.initialpic, self.newpic)
 
-        #dst = cv2.warpPerspective(a, M, (1920, 1080))
+        self.perspective_pic()
+
+
+    def perspective_pic(self):
+        try:
+            im = cv2.warpAffine(self.img, self.M, (self.col, self.row))
+            im = cv2.warpPerspective(im, self.H, (self.col, self.row))
+            im = cv2.resize(im, (0, 0), fx=self.scale, fy=self.scale)
+        except:
+            im = cv2.warpPerspective(self.img, self.H, (self.col, self.row))
+            im = cv2.resize(im, (0, 0), fx=self.scale, fy=self.scale)
+
+        self.freshpic(im)
 
 
 class MyCanvas(tk.Canvas):
@@ -197,16 +237,15 @@ b = Block(w)
 #########button that controls the perspective######
 ButtonFrame_l=tk.Frame(master,relief=RAISED,borderwidth=2)
 ButtonFrame_l.pack(side=LEFT,fill=BOTH,ipadx=13,ipady=13,expand=0)
-ButtonFrame_r=tk.Frame(master,relief=RAISED,borderwidth=2)
-ButtonFrame_r.pack(side=RIGHT,fill=BOTH,ipadx=13,ipady=13,expand=0)
-ul=tk.Button(ButtonFrame_l,text='左上',command=b.buttonul)
-ul.pack(side=TOP)
-ur=tk.Button(ButtonFrame_r,text='右上',command=w.testprint)
-ur.pack(side=TOP)
-dl=tk.Button(ButtonFrame_l,text='左下',command=w.testprint)
-dl.pack(side=TOP)
-dr=tk.Button(ButtonFrame_r,text='右下',command=w.testprint)
-dr.pack(side=TOP)
+
+ls=tk.Button(ButtonFrame_l,text='左缩',command=b.buttonLeftShrink)
+ls.pack(side=LEFT)
+rs=tk.Button(ButtonFrame_l,text='右缩',command=b.buttonRightShrink)
+rs.pack(side=RIGHT)
+ds=tk.Button(ButtonFrame_l,text='下缩',command=b.buttonDownShrink)
+ds.pack(side=BOTTOM)
+us=tk.Button(ButtonFrame_l,text='上缩',command=b.buttonUpShrink)
+us.pack(side=TOP)
 ##########
 outsizebar = tk.Scale(master, from_=0, to=180, orient=tk.HORIZONTAL, command=b.changeOutsize, showvalue=True)
 outsizebar.set(180)  # 设置初始值
