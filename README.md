@@ -33,11 +33,11 @@
 
 		|--scene1.png~scene6.png		#效果展示
 
-		|--resize.gif								   #小程序使用说明
+		|--resize.gif				#小程序使用说明
 
-		|--rotate.gif								   #小程序使用说明
+		|--rotate.gif				#小程序使用说明
 
-		|--screenshot.gif						  #小程序使用说明
+		|--screenshot.gif			#小程序使用说明
 
-		|--transparent.gif						#小程序使用说明
+		|--transparent.gif			#小程序使用说明
 
