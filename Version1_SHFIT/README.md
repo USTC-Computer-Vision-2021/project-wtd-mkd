@@ -110,7 +110,7 @@
 
 - #### test2
 
-  <img src=" Match2.jpg" style="zoom:100%;float:center;" />
+  <img src=" Match2.jpg" style="zoom:30%;float:center;" />
 
   <img src="result2.jpg" style="zoom:100%;float:center;" />
 
