@@ -16,28 +16,28 @@
 
 #### 	**Version_SHIFT:**
 
-​		|-- code
-​		|    |--main.py    #主函数
-​		|-- input
-​		|    |--test1.jpg  #测试图片1
-​		|    |--test2.jpg  #测试图片2
-​		|-- output
-​    		|--result1.jpg #test1插入结果
-​    		|--Match1.jpg  #test1匹配结果
-​    		|--result2.jpg #test2插入结果
+		|-- code
+		|    |--main.py    #主函数
+		|-- input
+		|    |--test1.jpg  #测试图片1
+		|    |--test2.jpg  #测试图片2
+		|-- output
+    		|--result1.jpg #test1插入结果
+    		|--Match1.jpg  #test1匹配结果
+    		|--result2.jpg #test2插入结果
    		|--Match2.jpg  #test2匹配结果
 
 
 
 #### 	**gifs:**
 
-​		|--scene1.png~scene6.png		#效果展示
+		|--scene1.png~scene6.png		#效果展示
 
-​		|--resize.gif								   #小程序使用说明
+		|--resize.gif								   #小程序使用说明
 
-​		|--rotate.gif								   #小程序使用说明
+		|--rotate.gif								   #小程序使用说明
 
-​		|--screenshot.gif						  #小程序使用说明
+		|--screenshot.gif						  #小程序使用说明
 
-​		|--transparent.gif						#小程序使用说明
+		|--transparent.gif						#小程序使用说明
 
