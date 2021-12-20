@@ -8,7 +8,7 @@
 
 **Version1_SHIFT**：基于SHFIT实现 "look into past"，为初代版本，详情请阅读该文件夹下README.md		
 
-**gifs**：基于$Tkinter$的图片插入器，以解决基于SHIFT实现的方法的不足，详情请阅读该文件夹README.md
+**gifs**：基于Tkinter的图片插入器，以解决基于SHIFT实现的方法的不足，详情请阅读该文件夹README.md
 
 
 
@@ -25,7 +25,7 @@
 ​    		|--result1.jpg #test1插入结果
 ​    		|--Match1.jpg  #test1匹配结果
 ​    		|--result2.jpg #test2插入结果
-   		 |--Match2.jpg  #test2匹配结果
+   		|--Match2.jpg  #test2匹配结果
 
 
 
